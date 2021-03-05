@@ -10,7 +10,6 @@ def sum_str(arr):
 
 with open("data.tsv", encoding="utf8") as file:
     read = csv.reader(file, delimiter="\t")
-    #print(next(read))
     for _ in range(15):
         next(read)
 
@@ -25,23 +24,16 @@ with open("data.tsv", encoding="utf8") as file:
             if code not in category:
                 category[code] = {'code': code, 'age': {}}
 
-            for i in range(9):
-                age = str(i * 10) + '-' + str(i * 10 + 9)
+            for i in range(19):
+                age = str(i * 5) + '-' + str(i * 5 + 4)
                 if age not in category[code]['age']:
                     category[code]['age'][age] = {}
                 if sex not in category[code]['age'][age]:
-                    category[code]['age'][age][sex] = sum_str(row[i * 10 + 8:i * 10 + 8 + 10])
+                    category[code]['age'][age][sex] = sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
                 else:
-                    category[code]['age'][age][sex] += sum_str(row[i * 10 + 8:i * 10 + 8 + 10])
+                    category[code]['age'][age][sex] += sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
 
-            if '90-99' not in category[code]['age']:
-                category[code]['age']['90-99'] = {}
-            if sex not in category[code]['age']['90-99']:
-                category[code]['age']['90-99'][sex] = sum_str(row[9 * 10 + 8:])
-            else:
-                category[code]['age']['90-99'][sex] += sum_str(row[9 * 10 + 8:])
-
-        elif row[2] != '' and row[3] != '' and row[5] == 'patients' and row[6] == 'tot':  # Category
+        elif row[2] != '' and row[3] != '' and row[5] == 'patients' and row[6] == 'tot':  # Diagnosis
             code = row[1]
             parent = row[3]
             sex = 'M' if row[4] == 'M' else 'W'
@@ -49,21 +41,15 @@ with open("data.tsv", encoding="utf8") as file:
             if code not in diagnosis:
                 diagnosis[code] = {'code': code, 'parent': parent, 'age': {}}
 
-            for i in range(9):
-                age = str(i * 10) + '-' + str(i * 10 + 9)
+            for i in range(19):
+                age = str(i * 5) + '-' + str(i * 5 + 4)
                 if age not in diagnosis[code]['age']:
                     diagnosis[code]['age'][age] = {}
                 if sex not in diagnosis[code]['age'][age]:
-                    diagnosis[code]['age'][age][sex] = sum_str(row[i * 10 + 8:i * 10 + 8 + 10])
+                    diagnosis[code]['age'][age][sex] = sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
                 else:
-                    diagnosis[code]['age'][age][sex] += sum_str(row[i * 10 + 8:i * 10 + 8 + 10])
-
-            if '90-99' not in diagnosis[code]['age']:
-                diagnosis[code]['age']['90-99'] = {}
-            if sex not in diagnosis[code]['age']['90-99']:
-                diagnosis[code]['age']['90-99'][sex] = sum_str(row[9 * 10 + 8:])
-            else:
-                diagnosis[code]['age']['90-99'][sex] += sum_str(row[9 * 10 + 8:])
+                    diagnosis[code]['age'][age][sex] += sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
+            diagnosis[code]['next'] = {'INITIAL': 1}
 
 for value in diagnosis.values():
     for age in utils.AGES:

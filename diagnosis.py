@@ -1,25 +1,35 @@
-import utils.utils as utils
 import random
-from datetime import date
 
 
 class Diagnosis:
 
-    def __init__(self, code, age):
+    def __init__(self, code, age, next_diagnoses):
         self.code = code
         self.age = age
+        self.next_diagnoses = next_diagnoses
 
 
-def get_diagnosis(diagnoses, person):
-    power = random.uniform(0, 1)
+def get_category_diagnosis(model, person, code):
+    diagnoses = {i: model.get_diagnosis_by_code(i).age[person.get_age_range()][person.sex] for i in
+                 model.graph[code]}
+    diagnoses = dict(sorted(diagnoses.items(), key=lambda category: category[1]))
+
+    probability = random.uniform(0, 1)
     previous = 0
-    age = person.today.year - date.today().year
 
-    diagnoses.sort(key=lambda x: x.age[utils.AGES[age // 10]][person.sex])
-    for diagnosis in diagnoses:
-        probability = diagnosis.age[utils.AGES[age // 10]][person.sex]
-        if probability + previous >= power:
-            return diagnosis.code
+    for code, prob in diagnoses.items():
+        if prob + previous >= probability:
+            return code
         else:
-            previous += probability
-    return None
+            previous += prob
+
+
+def get_next_diagnosis(next_diagnoses):
+    diagnoses = dict(sorted(next_diagnoses.items(), key=lambda category: category[1]))
+    probability = random.uniform(0, 1)
+    previous = 0
+    for code, prob in diagnoses.items():
+        if prob + previous >= probability:
+            return code
+        else:
+            previous += prob

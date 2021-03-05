@@ -2,6 +2,7 @@ import yaml
 import os
 from category import Category
 from diagnosis import Diagnosis
+from model import Model
 import utils.utils as utils
 
 
@@ -9,14 +10,24 @@ def get_diagnosis(filename):
     with open(filename) as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
         age = data['age']
-        return Diagnosis(data['code'], age)
+        next_diagnoses = scale_next_diagnoses(data['next'])
+        return Diagnosis(data['code'], age, next_diagnoses)
 
 
-def get_category(filename, diagnoses):
+def get_category(filename):
     with open(filename) as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
         age = data['age']
-        return Category(data['code'], age, None, diagnoses, None)
+        return Category(data['code'], age)
+
+
+def scale_next_diagnoses(next_diagnoses):
+    scaled = utils.scale_down([item for item in next_diagnoses.values()])
+    index = 0
+    for code in next_diagnoses:
+        next_diagnoses[code] = scaled[index]
+        index += 1
+    return next_diagnoses
 
 
 def scale_ages(objects):
@@ -28,19 +39,22 @@ def scale_ages(objects):
     return objects
 
 
-def get_model():
-    categories = []
-    category_by_code = dict()
-    for categoryFile in os.listdir('../data/category/'):
+def get_model(path=""):
+    model = Model()
+    for categoryFile in os.listdir(path + 'data/category/'):
+        category = get_category(path + 'data/category/' + categoryFile)
+        model.add_edge('INITIAL', category.code)
+        model.add_category(category)
         diagnoses = []
-        for diagnosisFile in os.listdir('../data/diagnosis/' + categoryFile[:-4]):
-            diagnoses.append(get_diagnosis('../data/diagnosis/' + categoryFile[:-4] + '/' + diagnosisFile))
-        diagnoses = scale_ages(diagnoses)
-        category = get_category('../data/category/' + categoryFile, diagnoses)
-        category_by_code[category.code] = category
-        categories.append(category)
+        for diagnosisFile in os.listdir(path + 'data/diagnosis/' + categoryFile[:-4]):
+            diagnosis = get_diagnosis(path + 'data/diagnosis/' + categoryFile[:-4] + '/' + diagnosisFile)
+            for next_diagnosis in diagnosis.next_diagnoses:
+                model.add_edge(diagnosis.code, next_diagnosis)
+            model.add_diagnosis(diagnosis)
+            diagnoses.append(diagnosis)
+            model.add_edge(category.code, diagnosis.code)
 
-    categories = scale_ages(categories)
-
-    initial = Category('INITIAL', None, categories, None, None)
-    return initial
+        for diagnosis in scale_ages(diagnoses):
+            model.add_diagnosis(diagnosis)
+    model.categories = scale_ages(model.categories)
+    return model
