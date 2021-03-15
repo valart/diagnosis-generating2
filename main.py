@@ -6,14 +6,14 @@ from datetime import date
 def save_into_file(data):
     with open('diagnoses.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter='\t')
-        writer.writerow(["Code", "Sex", "Birthday", "Died", "Age", "Diagnoses"])
+        writer.writerow(["Code", "Sex", "Birthday", "Died", "Age", "Diagnoses", "Categories"])
         for person in data:
-            writer.writerow([person.code, person.sex, date.today(), person.today, person.today.year - date.today().year, person.diagnoses])
+            writer.writerow([person.code, person.sex, date.today(), person.today, person.today.year - date.today().year, person.diagnoses, person.categories])
 
 
 def generate():
     data = []
-    for i in range(0, 200, 2):
+    for i in range(0, 10000, 2):
         man = Person(str(i+1), "M")
         man.live()
         woman = Person(str(i+2), "W")

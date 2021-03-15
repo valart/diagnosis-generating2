@@ -12,10 +12,16 @@ class Person:
         self.diagnoses = []
         self.today = date.today()
         self.alive = True
+        self.categories = []
 
     def live(self):
         model = get_model()
         model.generate(self, 'INITIAL')
+
+    def add_diagnosis(self, code):
+        newDay = utils.get_random_date(self.today)
+        self.today = newDay
+        self.diagnoses.append((code, str(newDay)))
 
     def die(self):
         # http://andmebaas.stat.ee/Index.aspx?DataSetCode=RV56#

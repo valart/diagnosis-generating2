@@ -22,6 +22,7 @@ def get_category_diagnosis(model, person, code):
             return code
         else:
             previous += prob
+    return None
 
 
 def get_next_diagnosis(next_diagnoses):

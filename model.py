@@ -1,7 +1,6 @@
 from category import *
 from diagnosis import *
 from datetime import date
-import utils.utils as utils
 
 
 class Model:
@@ -37,23 +36,22 @@ class Model:
         if person.new_diagnosis():
             if code == 'INITIAL':
                 category_code = get_category(self, person)
+                person.categories.append((category_code, str(person.today.year - date.today().year)))
                 diagnosis_code = get_category_diagnosis(self, person, category_code)
-                newDay = utils.get_random_date(person.today)
-                person.today = newDay
-                person.diagnoses.append((diagnosis_code, str(newDay)))
-                code = diagnosis_code
-            else:
-                if self.get_category_by_code(code) is not None:
-                    diagnosis_code = get_category_diagnosis(self, person, code)
-                    newDay = utils.get_random_date(person.today)
-                    person.today = newDay
-                    person.diagnoses.append((diagnosis_code, str(newDay)))
+                if diagnosis_code is not None:
+                    person.add_diagnosis(diagnosis_code)
                     code = diagnosis_code
                 else:
+                    code = 'INITIAL'
+            else:
+                if self.get_category_by_code(code) is not None:
+                    person.categories.append((code, str(person.today.year - date.today().year)))
+                    diagnosis_code = get_category_diagnosis(self, person, code)
+                    person.add_diagnosis(diagnosis_code)
+                    code = diagnosis_code
+                else:
+                    person.add_diagnosis(code)
                     next_diagnosis = get_next_diagnosis(self.get_diagnosis_by_code(code).next_diagnoses)
-                    newDay = utils.get_random_date(person.today)
-                    person.today = newDay
-                    person.diagnoses.append((code, str(newDay)))
                     code = next_diagnosis
         if person.new_year():
             person.today = date(person.today.year + 1, 1, 1)

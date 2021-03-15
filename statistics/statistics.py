@@ -69,14 +69,15 @@ for value in category.values():
 if not os.path.exists('../data/category'):
     os.makedirs('../data/category')
 
+if not os.path.exists('../data/diagnosis'):
+    os.makedirs('../data/diagnosis')
+
 for cat in category:
-    with open('category/' + cat + '.yml', 'w') as file:
+    with open('../data/category/' + cat + '.yml', 'w') as file:
         documents = yaml.dump(category[cat], file, sort_keys=False)
 
 for diag in diagnosis:
-    if not os.path.exists('diagnosis/' + diagnosis[diag]['parent']):
-        os.makedirs('diagnosis/' + diagnosis[diag]['parent'])
-    with open('diagnosis/' + diagnosis[diag]['parent'] + '/' + diag + '.yml', 'w') as file:
+    with open('../data/diagnosis/' + diagnosis[diag]['parent'] + '/' + diag + '.yml', 'w') as file:
         documents = yaml.dump(diagnosis[diag], file, sort_keys=False)
 
 
