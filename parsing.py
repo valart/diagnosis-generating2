@@ -39,6 +39,18 @@ def scale_ages(objects):
     return objects
 
 
+def emergence_probabilities():
+    probs = yaml.load(open('data/probability/diagnosesProbability.yml'), Loader=yaml.FullLoader)
+    summa = 0
+    for sex in ["M", "W"]:
+        for age in utils.AGES:
+            summa += probs[age][sex]
+    for sex in ["M", "W"]:
+        for age in utils.AGES:
+            probs[age][sex] /= summa
+    return probs
+
+
 def get_model(path=""):
     model = Model()
     for categoryFile in os.listdir(path + 'data/category/'):
@@ -57,4 +69,6 @@ def get_model(path=""):
         for diagnosis in scale_ages(diagnoses):
             model.add_diagnosis(diagnosis)
     model.categories = scale_ages(model.categories)
+    emergence_probabilities()
+    model.diagnoses_emergence_probabilities = emergence_probabilities()
     return model

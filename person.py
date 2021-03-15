@@ -1,4 +1,3 @@
-from parsing import get_model
 from datetime import date
 import random
 from utils import utils
@@ -14,8 +13,7 @@ class Person:
         self.alive = True
         self.categories = []
 
-    def live(self):
-        model = get_model()
+    def live(self, model):
         model.generate(self, 'INITIAL')
 
     def add_diagnosis(self, code):
@@ -65,15 +63,13 @@ class Person:
             return rand <= 0.1665
         if age // 5 == 18:
             return rand <= 0.1703
-        if age // 5 == 19:
-            return rand <= 0.1164
         return True
 
     def new_year(self):
         age = self.today.year - date.today().year
         if age < 5:
-            age += 10
-        return random.randint(0, 100) <= 100 - age
+            age += 15
+        return random.randint(0, 100) >= age
 
     def new_diagnosis(self):
         age = self.today.year - date.today().year

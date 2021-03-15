@@ -15,6 +15,7 @@ with open("data.tsv", encoding="utf8") as file:
 
     category = dict()
     diagnosis = dict()
+    get_diagnosis = {}
 
     for row in read:
         if row[2] == '' and row[3] == '' and row[5] == 'patients' and row[6] == 'tot':  # Category
@@ -32,6 +33,14 @@ with open("data.tsv", encoding="utf8") as file:
                     category[code]['age'][age][sex] = sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
                 else:
                     category[code]['age'][age][sex] += sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
+
+                if age not in get_diagnosis:
+                    get_diagnosis[age] = {}
+                    get_diagnosis[age]['M'] = 0
+                    get_diagnosis[age]['W'] = 0
+                    get_diagnosis[age][sex] = sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
+                else:
+                    get_diagnosis[age][sex] += sum_str(row[i * 5 + 8:i * 5 + 8 + 5])
 
         elif row[2] != '' and row[3] != '' and row[5] == 'patients' and row[6] == 'tot':  # Diagnosis
             code = row[1]
@@ -65,19 +74,24 @@ for value in category.values():
         elif 'W' not in value['age'][age]:
             value['age'][age]['W'] = 0
 
-
 if not os.path.exists('../data/category'):
     os.makedirs('../data/category')
 
 if not os.path.exists('../data/diagnosis'):
     os.makedirs('../data/diagnosis')
 
+if not os.path.exists('../data/probability'):
+    os.makedirs('../data/probability')
+
 for cat in category:
     with open('../data/category/' + cat + '.yml', 'w') as file:
         documents = yaml.dump(category[cat], file, sort_keys=False)
 
 for diag in diagnosis:
+    if not os.path.exists('../data/diagnosis/' + diagnosis[diag]['parent']):
+        os.makedirs('../data/diagnosis/' + diagnosis[diag]['parent'])
     with open('../data/diagnosis/' + diagnosis[diag]['parent'] + '/' + diag + '.yml', 'w') as file:
         documents = yaml.dump(diagnosis[diag], file, sort_keys=False)
 
-
+with open('../data/probability/' + 'diagnosesProbability.yml', 'w') as file:
+    documents = yaml.dump(get_diagnosis, file, sort_keys=False)

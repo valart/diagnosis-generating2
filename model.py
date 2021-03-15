@@ -1,6 +1,7 @@
 from category import *
 from diagnosis import *
 from datetime import date
+import random
 
 
 class Model:
@@ -8,6 +9,7 @@ class Model:
     def __init__(self):
         self.categories = []
         self.diagnoses = []
+        self.diagnoses_emergence_probabilities = {}
         self.graph = dict()
 
     def add_diagnosis(self, diagnosis):
@@ -33,7 +35,7 @@ class Model:
     def generate(self, person, code):
         if not person.alive:
             return
-        if person.new_diagnosis():
+        if random.random() <= self.diagnoses_emergence_probabilities[person.get_age_range()][person.sex]: #person.new_diagnosis():
             if code == 'INITIAL':
                 category_code = get_category(self, person)
                 person.categories.append((category_code, str(person.today.year - date.today().year)))
