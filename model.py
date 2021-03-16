@@ -38,7 +38,6 @@ class Model:
         if random.random() <= self.diagnoses_emergence_probabilities[person.get_age_range()][person.sex]: #person.new_diagnosis():
             if code == 'INITIAL':
                 category_code = get_category(self, person)
-                person.categories.append((category_code, str(person.today.year - date.today().year)))
                 diagnosis_code = get_category_diagnosis(self, person, category_code)
                 if diagnosis_code is not None:
                     person.add_diagnosis(diagnosis_code)
@@ -47,13 +46,13 @@ class Model:
                     code = 'INITIAL'
             else:
                 if self.get_category_by_code(code) is not None:
-                    person.categories.append((code, str(person.today.year - date.today().year)))
                     diagnosis_code = get_category_diagnosis(self, person, code)
                     person.add_diagnosis(diagnosis_code)
                     code = diagnosis_code
                 else:
-                    person.add_diagnosis(code)
                     next_diagnosis = get_next_diagnosis(self.get_diagnosis_by_code(code).next_diagnoses)
+                    if next_diagnosis != 'INITIAL':
+                        person.add_diagnosis(next_diagnosis)
                     code = next_diagnosis
         if person.new_year():
             person.today = date(person.today.year + 1, 1, 1)

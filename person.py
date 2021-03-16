@@ -19,7 +19,11 @@ class Person:
     def add_diagnosis(self, code):
         newDay = utils.get_random_date(self.today)
         self.today = newDay
-        self.diagnoses.append((code, str(newDay)))
+        for categoryCode in utils.categories:
+            if code in utils.categories[categoryCode]:
+                self.categories.append((code, str(newDay)))
+                break
+        self.diagnoses.append((categoryCode, str(newDay)))
 
     def die(self):
         # http://andmebaas.stat.ee/Index.aspx?DataSetCode=RV56#
