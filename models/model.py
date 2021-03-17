@@ -1,5 +1,5 @@
-from category import *
-from diagnosis import *
+from models.category import *
+from models.diagnosis import *
 from datetime import date
 import random
 

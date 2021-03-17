@@ -1,8 +1,8 @@
 import yaml
 import os
-from category import Category
-from diagnosis import Diagnosis
-from model import Model
+from models.category import Category
+from models.diagnosis import Diagnosis
+from models.model import Model
 import utils.utils as utils
 
 

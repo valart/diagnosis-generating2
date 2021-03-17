@@ -1,13 +1,16 @@
-from person import *
+from models.person import *
 import csv
 from datetime import date
 from parsing import get_model
 import sys
 from visualization import visualization, graphics
+import os
 
 
 def save_into_file(data):
-    with open('diagnoses.csv', 'w', newline='') as file:
+    if not os.path.exists('output'):
+        os.makedirs('output')
+    with open('output/diagnoses.csv', 'w', newline='') as file:
         writer = csv.writer(file, delimiter='\t')
         writer.writerow(["Code", "Sex", "Birthday", "Died", "Age", "Diagnoses", "Categories"])
         for person in data:
@@ -23,9 +26,9 @@ def generate(population=10):
         human = Person(str(i + 1), random.choice(['M', 'W']))
         human.live(model)
         data.append(human)
-        print(i)
+        print(i+1)
     save_into_file(data)
-    print("Created {} people into diagnoses.csv file".format(population))
+    print("Created {} people into output folder diagnoses.csv file".format(population))
 
 
 def show_model(age, sex):

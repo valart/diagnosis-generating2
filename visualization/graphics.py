@@ -15,11 +15,11 @@ def show_categories(category):
     rng = [[0] * 100 for i in range(len(categories))]
     years = [i for i in range(100)]
 
-    with open("diagnoses.csv", encoding="utf8") as file:
+    with open("output/diagnoses.csv", encoding="utf8") as file:
         read = csv.reader(file, delimiter="\t")
         next(read)
         for row in read:
-            rowVal = row[5] if category == "category" else row[6]
+            rowVal = row[6] if category == "category" else row[5]
             for cat in list(ast.literal_eval(rowVal)):
                 if cat[0] in categories:
                     catIndex = categories.index(cat[0])
@@ -31,7 +31,7 @@ def show_categories(category):
         rng[i] = gaussian_filter1d(rng[i], sigma=2)
 
     ax.stackplot(years, rng, labels=categories, colors=utils.colors[:len(categories)])
-    ax.set_title('Estonian specialized medical care')
+    ax.set_title('Categories' if category == "category" else category)
     ax.legend(loc='upper right')
     ax.set_ylabel('Total patients')
     fig.tight_layout()
