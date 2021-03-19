@@ -69,6 +69,5 @@ def get_model(path=""):
         for diagnosis in scale_ages(diagnoses):
             model.add_diagnosis(diagnosis)
     model.categories = scale_ages(model.categories)
-    emergence_probabilities()
     model.diagnoses_emergence_probabilities = emergence_probabilities()
     return model
